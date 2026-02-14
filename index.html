@@ -3,23 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>San Valentín</title>
+<title>Para Ivonne</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family: 'Georgia', cursive;
-font-style: italic;
+font-family:"Georgia",cursive;
+font-style:italic;
 }
 
 body{
-background:linear-gradient(to bottom,#000010,#000020);
+background:radial-gradient(circle at bottom,#000010,#000000 80%);
+color:white;
 overflow:hidden;
 height:100vh;
-color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 text-align:center;
 }
 
@@ -30,38 +33,45 @@ width:2px;
 height:2px;
 background:white;
 border-radius:50%;
-animation:blink 2s infinite alternate;
+animation:twinkle 2s infinite alternate;
 }
 
-@keyframes blink{
+@keyframes twinkle{
 from{opacity:0.2;}
 to{opacity:1;}
 }
 
-/* contenido */
-.container{
-position:relative;
-z-index:2;
-top:8%;
+/* corazones flotando */
+.floatHeart{
+position:absolute;
+color:#ff6b9a;
+animation:floatUp linear forwards;
 }
 
-h1{
-font-size:clamp(24px,4vw,40px);
-margin-bottom:10px;
+@keyframes floatUp{
+from{transform:translateY(100vh);opacity:0;}
+20%{opacity:1;}
+to{transform:translateY(-10vh);opacity:0;}
 }
 
-h2{
-font-size:clamp(20px,3vw,30px);
-margin-bottom:20px;
+/* pantallas */
+.screen{
+position:absolute;
+transition:opacity 1s ease;
+}
+
+.hidden{
+opacity:0;
+pointer-events:none;
 }
 
 /* botones */
 button{
-padding:12px 25px;
+margin:15px;
+padding:12px 30px;
 border:none;
 border-radius:30px;
 font-size:18px;
-margin:10px;
 cursor:pointer;
 transition:0.3s;
 }
@@ -74,87 +84,60 @@ color:white;
 .no{
 background:#444;
 color:white;
+position:relative;
 }
 
 button:hover{
 transform:scale(1.1);
 }
 
-/* árbol */
-#tree{
+/* explosión */
+.particle{
 position:absolute;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-width:min(90vw,500px);
-height:60vh;
+font-size:18px;
+pointer-events:none;
+animation:explode 1s ease-out forwards;
 }
 
-/* modal */
-#errorModal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.9);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:99999;
+@keyframes explode{
+from{
+transform:translate(0,0) scale(1);
+opacity:1;
 }
-
-.modal-content{
-background:#1a1a2e;
-padding:40px;
-border-radius:20px;
-box-shadow:0 0 30px #ff4d6d;
+to{
+transform:translate(var(--x),var(--y)) scale(0.2);
+opacity:0;
 }
-
-.modal-content button{
-background:#ff4d6d;
-color:white;
-margin-top:15px;
-}
-
-#countdown{
-margin-top:20px;
-font-size:20px;
-display:none;
 }
 
 </style>
 </head>
+
 <body oncontextmenu="return false;">
 
-<div class="container">
-<h1>para Ivonne</h1>
-<h2 id="pregunta">¿Quieres ser mi San Valentín?</h2>
+<audio id="music" loop>
+<source src="musica.mp3" type="audio/mpeg">
+</audio>
 
-<button class="si" onclick="aceptar()">Sí 💖</button>
-<button class="no" onclick="errorNo()">No 💔</button>
-
-<div id="countdown"></div>
+<div id="startScreen" class="screen">
+<h1>presiona cualquier tecla para comenzar...</h1>
 </div>
 
-<!-- árbol -->
-<svg id="tree" viewBox="0 0 500 500">
-
-<rect x="235" y="250" width="30" height="200" fill="#6b3e26"/>
-
-<g id="heartsGroup"></g>
-
-</svg>
-
-<!-- modal -->
-<div id="errorModal">
-<div class="modal-content">
-<h2>esa opción no está disponible 💔</h2>
-<button onclick="cerrarError()">entendido</button>
+<div id="questionScreen" class="screen hidden">
+<h2>¿quieres ser mi san valentín?</h2>
+<button class="si" onclick="aceptar()">sí 💖</button>
+<button class="no" id="noBtn">no 💔</button>
 </div>
+
+<div id="successScreen" class="screen hidden">
+<h2>sabía que dirías que sí 💖</h2>
+<p>eres la mejor persona del mundo</p>
 </div>
 
 <script>
 
 /* estrellas */
-for(let i=0;i<120;i++){
+for(let i=0;i<150;i++){
 let star=document.createElement("div");
 star.className="star";
 star.style.top=Math.random()*100+"%";
@@ -163,100 +146,68 @@ star.style.animationDuration=(Math.random()*3+1)+"s";
 document.body.appendChild(star);
 }
 
-/* generar corazones en forma de corazón */
-function generarArbol(cantidad,delay=80){
+/* corazones flotando */
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.className="floatHeart";
+heart.innerHTML="❤";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(Math.random()*20+15)+"px";
+heart.style.animationDuration=(Math.random()*5+5)+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),8000);
+},500);
 
-const grupo=document.getElementById("heartsGroup");
-let i=0;
+/* iniciar */
+document.addEventListener("click",iniciar,{once:true});
+document.addEventListener("keydown",iniciar,{once:true});
 
-let intervalo=setInterval(()=>{
+function iniciar(){
+document.getElementById("startScreen").classList.add("hidden");
+document.getElementById("questionScreen").classList.remove("hidden");
 
-if(i>=cantidad){
-clearInterval(intervalo);
-return;
+let music=document.getElementById("music");
+music.play().catch(()=>{});
 }
 
-let t=Math.random()*Math.PI*2;
-let x=16*Math.pow(Math.sin(t),3);
-let y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+/* botón no huye */
+const noBtn=document.getElementById("noBtn");
 
-let scale=12;
+noBtn.addEventListener("mouseover",()=>{
+let x=Math.random()*(window.innerWidth-100);
+let y=Math.random()*(window.innerHeight-50);
 
-let finalX=250 + x*scale;
-let finalY=200 + y*scale;
-
-let heart=document.createElementNS("http://www.w3.org/2000/svg","path");
-
-heart.setAttribute("d","M10 30 A20 20 0 0 1 50 30 Q50 60 10 90 Q-30 60 -30 30 A20 20 0 0 1 10 30 Z");
-
-heart.setAttribute("transform",
-`translate(${finalX},${finalY}) scale(${Math.random()*0.3+0.2})`
-);
-
-heart.setAttribute("fill",
-`hsl(${Math.random()*20+340},70%,${60+Math.random()*20}%)`
-);
-
-heart.style.opacity=0;
-
-grupo.appendChild(heart);
-
-setTimeout(()=>{
-heart.style.transition="opacity 1s";
-heart.style.opacity=1;
-},50);
-
-i++;
-
-},delay);
-
-}
-
-/* inicial */
-generarArbol(120,60);
+noBtn.style.position="absolute";
+noBtn.style.left=x+"px";
+noBtn.style.top=y+"px";
+});
 
 /* aceptar */
 function aceptar(){
-
-document.getElementById("pregunta").innerHTML="sabía que dirías que sí 💖";
-
-generarArbol(200,30);
-
-iniciarCuenta();
-
+document.getElementById("questionScreen").classList.add("hidden");
+document.getElementById("successScreen").classList.remove("hidden");
+explosion();
 }
 
-/* cuenta regresiva */
-function iniciarCuenta(){
+/* explosión romántica */
+function explosion(){
+for(let i=0;i<120;i++){
+let particle=document.createElement("div");
+particle.className="particle";
+particle.innerHTML="❤";
 
-let countdown=document.getElementById("countdown");
-countdown.style.display="block";
+let angle=Math.random()*2*Math.PI;
+let distance=Math.random()*300;
 
-let fecha=new Date("February 14, 2026 00:00:00").getTime();
+particle.style.left="50%";
+particle.style.top="50%";
+particle.style.setProperty("--x",Math.cos(angle)*distance+"px");
+particle.style.setProperty("--y",Math.sin(angle)*distance+"px");
 
-setInterval(()=>{
+document.body.appendChild(particle);
 
-let ahora=new Date().getTime();
-let distancia=fecha-ahora;
-
-let dias=Math.floor(distancia/(1000*60*60*24));
-let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60));
-let minutos=Math.floor((distancia%(1000*60*60))/(1000*60));
-let segundos=Math.floor((distancia%(1000*60))/1000);
-
-countdown.innerHTML=`faltan ${dias}d ${horas}h ${minutos}m ${segundos}s`;
-
-},1000);
-
+setTimeout(()=>particle.remove(),1000);
 }
-
-/* no */
-function errorNo(){
-document.getElementById("errorModal").style.display="flex";
-}
-
-function cerrarError(){
-document.getElementById("errorModal").style.display="none";
 }
 
 </script>
