@@ -82,22 +82,6 @@ animation:fall linear forwards;
 100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
 }
 
-/* FUEGOS */
-.firework{
-position:absolute;
-width:6px;
-height:6px;
-background:gold;
-border-radius:50%;
-pointer-events:none;
-animation:fireworkExplode 1s ease-out forwards;
-}
-
-@keyframes fireworkExplode{
-from{transform:scale(1);opacity:1;}
-to{transform:scale(8);opacity:0;}
-}
-
 /* PANTALLAS */
 .screen{
 position:absolute;
@@ -195,7 +179,7 @@ to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 
 <body>
 
-<audio id="music" loop autoplay>
+<audio id="music" loop>
 <source src="musica.mp3" type="audio/mpeg">
 </audio>
 
@@ -207,7 +191,7 @@ to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 <h2>¿quieres ser mi san valentín?</h2>
 
 <div class="button-container">
-<button class="si" id="siBtn" onclick="aceptar()">sí 💖</button>
+<button class="si" onclick="aceptar()">sí 💖</button>
 <button class="no" id="noBtn">no 💔</button>
 </div>
 </div>
@@ -250,7 +234,7 @@ document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),8000);
 },500);
 
-/* LLUVIA PÉTALOS */
+/* PÉTALOS */
 function lluviaPetalos(){
 for(let i=0;i<120;i++){
 let petal=document.createElement("div");
@@ -259,18 +243,6 @@ petal.style.left=Math.random()*100+"vw";
 petal.style.animationDuration=(Math.random()*4+4)+"s";
 document.body.appendChild(petal);
 setTimeout(()=>petal.remove(),8000);
-}
-}
-
-/* FUEGOS */
-function fuegosArtificiales(){
-for(let i=0;i<30;i++){
-let fire=document.createElement("div");
-fire.className="firework";
-fire.style.left=Math.random()*100+"vw";
-fire.style.top=Math.random()*50+"vh";
-document.body.appendChild(fire);
-setTimeout(()=>fire.remove(),1000);
 }
 }
 
@@ -291,6 +263,9 @@ document.addEventListener("keydown",iniciar,{once:true});
 function iniciar(){
 document.getElementById("startScreen").classList.add("hidden");
 document.getElementById("questionScreen").classList.remove("hidden");
+
+/* música inicia tras interacción */
+document.getElementById("music").play().catch(()=>{});
 }
 
 /* BOTÓN NO */
@@ -321,7 +296,6 @@ document.getElementById("questionScreen").classList.add("hidden");
 document.getElementById("successScreen").classList.remove("hidden");
 explosion();
 lluviaPetalos();
-fuegosArtificiales();
 iluminarEstrellas();
 }
 
