@@ -211,7 +211,7 @@ to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 
 <script>
 
-/* ESTRELLAS */
+/* ================= ESTRELLAS ================= */
 let stars=[];
 for(let i=0;i<150;i++){
 let star=document.createElement("div");
@@ -223,7 +223,7 @@ document.body.appendChild(star);
 stars.push(star);
 }
 
-/* CORAZONES */
+/* ================= CORAZONES FLOTANDO ================= */
 setInterval(()=>{
 let heart=document.createElement("div");
 heart.className="floatHeart";
@@ -235,7 +235,7 @@ document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),8000);
 },500);
 
-/* PÉTALOS */
+/* ================= PÉTALOS ================= */
 function lluviaPetalos(){
 for(let i=0;i<120;i++){
 let petal=document.createElement("div");
@@ -247,7 +247,7 @@ setTimeout(()=>petal.remove(),8000);
 }
 }
 
-/* ESTRELLAS BRILLAN */
+/* ================= ESTRELLAS BRILLAN ================= */
 function iluminarEstrellas(){
 stars.forEach(star=>{
 star.classList.add("superGlow");
@@ -257,23 +257,21 @@ star.classList.remove("superGlow");
 });
 }
 
-/* INICIAR */
+/* ================= INICIAR ================= */
 document.addEventListener("click",iniciar,{once:true});
 document.addEventListener("keydown",iniciar,{once:true});
 
 function iniciar(){
 document.getElementById("startScreen").classList.add("hidden");
 document.getElementById("questionScreen").classList.remove("hidden");
-
-/* música inicia tras interacción */
 document.getElementById("music").play().catch(()=>{});
 lluviaPetalos();
 }
 
-/* BOTÓN NO */
+/* ================= BOTÓN NO ================= */
 const noBtn=document.getElementById("noBtn");
 const container=document.querySelector(".button-container");
-function iluminarEstrellas(){
+
 noBtn.addEventListener("mouseenter",moverNo);
 noBtn.addEventListener("click",mostrarError);
 
@@ -292,16 +290,17 @@ function cerrarModal(){
 document.getElementById("errorModal").style.display="none";
 }
 
-/* ACEPTAR */
+/* ================= ACEPTAR ================= */
 function aceptar(){
 document.getElementById("questionScreen").classList.add("hidden");
 document.getElementById("successScreen").classList.remove("hidden");
 explosion();
 lluviaPetalos();
 iluminarEstrellas();
+iniciarContador();
 }
 
-/* EXPLOSIÓN */
+/* ================= EXPLOSIÓN ================= */
 function explosion(){
 for(let i=0;i<120;i++){
 let particle=document.createElement("div");
@@ -318,10 +317,40 @@ setTimeout(()=>particle.remove(),1000);
 }
 }
 
+/* ================= CONTADOR SAN VALENTÍN ================= */
+function iniciarContador(){
+
+let contador=document.createElement("h3");
+contador.id="contador";
+contador.style.marginTop="20px";
+document.getElementById("successScreen").appendChild(contador);
+
+let yearActual=new Date().getFullYear();
+let fechaObjetivo=new Date(`February 14, ${yearActual} 00:00:00`);
+
+if(new Date()>fechaObjetivo){
+fechaObjetivo=new Date(`February 14, ${yearActual+1} 00:00:00`);
+}
+
+setInterval(()=>{
+let ahora=new Date().getTime();
+let distancia=fechaObjetivo.getTime()-ahora;
+
+let dias=Math.floor(distancia/(1000*60*60*24));
+let horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60));
+let minutos=Math.floor((distancia%(1000*60*60))/(1000*60));
+let segundos=Math.floor((distancia%(1000*60))/1000);
+
+contador.innerHTML=`faltan ${dias} días ${horas}h ${minutos}m ${segundos}s para el 14 de febrero 💖`;
+
+},1000);
+}
+
 </script>
 
 </body>
 </html>
+
 
 
 
