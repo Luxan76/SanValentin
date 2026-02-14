@@ -54,11 +54,11 @@ from{transform:translateY(100vh);opacity:0;}
 to{transform:translateY(-10vh);opacity:0;}
 }
 
-/* PÉTALOS */
+/* PÉTALOS DESDE ARRIBA */
 .petal{
 position:absolute;
-width:15px;
-height:15px;
+width:18px;
+height:18px;
 background:radial-gradient(circle at 30% 30%, #ff8fa3, #c9184a);
 border-radius:50% 70% 60% 80%;
 opacity:0.9;
@@ -67,9 +67,15 @@ animation:fall linear forwards;
 }
 
 @keyframes fall{
-0%{transform:translateY(-10vh) rotate(0deg);opacity:0;}
+0%{
+transform:translateY(-20vh) rotate(0deg);
+opacity:0;
+}
 10%{opacity:1;}
-100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
+100%{
+transform:translateY(110vh) rotate(720deg);
+opacity:0;
+}
 }
 
 /* PANTALLAS */
@@ -83,7 +89,7 @@ opacity:0;
 pointer-events:none;
 }
 
-/* CONTENEDOR BOTONES */
+/* CONTENEDOR */
 #questionScreen{
 position:relative;
 width:90%;
@@ -98,10 +104,11 @@ align-items:center;
 .button-container{
 position:relative;
 width:100%;
-height:140px;
+height:200px; /* MÁS RANGO */
 margin-top:20px;
 }
 
+/* BOTONES */
 button{
 padding:12px 30px;
 border:none;
@@ -126,6 +133,31 @@ button:hover{
 transform:scale(1.1);
 }
 
+/* MODAL ERROR */
+#errorModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.modal-box{
+background:#1a1a2e;
+padding:40px;
+border-radius:20px;
+box-shadow:0 0 30px #ff4d6d;
+text-align:center;
+}
+
+.modal-box button{
+margin-top:20px;
+background:#ff4d6d;
+color:white;
+}
+
 /* EXPLOSIÓN */
 .particle{
 position:absolute;
@@ -138,6 +170,7 @@ animation:explode 1s ease-out forwards;
 from{transform:translate(0,0) scale(1);opacity:1;}
 to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 }
+
 </style>
 </head>
 
@@ -166,6 +199,14 @@ to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 <p>eres la mejor persona del mundo</p>
 </div>
 
+<!-- MODAL -->
+<div id="errorModal">
+<div class="modal-box">
+<h2>esa opción no está disponible 💔</h2>
+<button onclick="cerrarModal()">continuar</button>
+</div>
+</div>
+
 <script>
 
 /* ESTRELLAS */
@@ -178,7 +219,7 @@ star.style.animationDuration=(Math.random()*3+1)+"s";
 document.body.appendChild(star);
 }
 
-/* CORAZONES FLOTANDO */
+/* CORAZONES */
 setInterval(()=>{
 let heart=document.createElement("div");
 heart.className="floatHeart";
@@ -190,16 +231,16 @@ document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),8000);
 },500);
 
-/* LLUVIA DE PÉTALOS */
+/* LLUVIA PÉTALOS */
 function lluviaPetalos(callback){
 
-for(let i=0;i<120;i++){
+for(let i=0;i<150;i++){
 let petal=document.createElement("div");
 petal.className="petal";
 petal.style.left=Math.random()*100+"vw";
-petal.style.animationDuration=(Math.random()*3+3)+"s";
+petal.style.animationDuration=(Math.random()*4+4)+"s";
 document.body.appendChild(petal);
-setTimeout(()=>petal.remove(),6000);
+setTimeout(()=>petal.remove(),8000);
 }
 
 setTimeout(()=>{
@@ -219,50 +260,36 @@ lluviaPetalos(()=>{
 document.getElementById("questionScreen").classList.remove("hidden");
 });
 
-let music=document.getElementById("music");
-music.play().catch(()=>{});
+document.getElementById("music").play().catch(()=>{});
 }
 
-/* BOTÓN NO INTELIGENTE */
+/* BOTÓN NO */
 const noBtn=document.getElementById("noBtn");
-const siBtn=document.getElementById("siBtn");
 const container=document.querySelector(".button-container");
 
 noBtn.addEventListener("mouseenter",moverNo);
 noBtn.addEventListener("touchstart",moverNo);
+noBtn.addEventListener("click",mostrarError);
 
 function moverNo(){
-
-const containerRect=container.getBoundingClientRect();
-const siRect=siBtn.getBoundingClientRect();
 
 let maxX=container.clientWidth-noBtn.offsetWidth;
 let maxY=container.clientHeight-noBtn.offsetHeight;
 
-let newX,newY,overlap;
-
-do{
-newX=Math.random()*maxX;
-newY=Math.random()*maxY;
-
-let noRect={
-left:containerRect.left+newX,
-right:containerRect.left+newX+noBtn.offsetWidth,
-top:containerRect.top+newY,
-bottom:containerRect.top+newY+noBtn.offsetHeight
-};
-
-overlap=!(
-noRect.right<siRect.left||
-noRect.left>siRect.right||
-noRect.bottom<siRect.top||
-noRect.top>siRect.bottom
-);
-
-}while(overlap);
+let newX=Math.random()*maxX;
+let newY=Math.random()*maxY;
 
 noBtn.style.left=newX+"px";
 noBtn.style.top=newY+"px";
+}
+
+/* MODAL */
+function mostrarError(){
+document.getElementById("errorModal").style.display="flex";
+}
+
+function cerrarModal(){
+document.getElementById("errorModal").style.display="none";
 }
 
 /* ACEPTAR */
