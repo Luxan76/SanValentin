@@ -266,14 +266,14 @@ document.getElementById("questionScreen").classList.remove("hidden");
 
 /* música inicia tras interacción */
 document.getElementById("music").play().catch(()=>{});
-  
+function iluminarEstrellas(){
 lluviaPetalos();
 }
 
 /* BOTÓN NO */
 const noBtn=document.getElementById("noBtn");
 const container=document.querySelector(".button-container");
-
+function iluminarEstrellas(){
 noBtn.addEventListener("mouseenter",moverNo);
 noBtn.addEventListener("click",mostrarError);
 
@@ -322,6 +322,7 @@ setTimeout(()=>particle.remove(),1000);
 
 </body>
 </html>
+
 
 
 
