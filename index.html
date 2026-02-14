@@ -15,7 +15,7 @@ font-style:italic;
 }
 
 body{
-background:radial-gradient(circle at bottom,#000010,#000000 80%);
+background:radial-gradient(circle at bottom,#000015,#000000 80%);
 color:white;
 overflow:hidden;
 height:100vh;
@@ -26,7 +26,7 @@ flex-direction:column;
 text-align:center;
 }
 
-/* estrellas */
+/* ESTRELLAS */
 .star{
 position:absolute;
 width:2px;
@@ -41,7 +41,7 @@ from{opacity:0.2;}
 to{opacity:1;}
 }
 
-/* corazones flotando */
+/* CORAZONES FLOTANDO */
 .floatHeart{
 position:absolute;
 color:#ff6b9a;
@@ -54,7 +54,25 @@ from{transform:translateY(100vh);opacity:0;}
 to{transform:translateY(-10vh);opacity:0;}
 }
 
-/* pantallas */
+/* PÉTALOS */
+.petal{
+position:absolute;
+width:15px;
+height:15px;
+background:radial-gradient(circle at 30% 30%, #ff8fa3, #c9184a);
+border-radius:50% 70% 60% 80%;
+opacity:0.9;
+pointer-events:none;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+0%{transform:translateY(-10vh) rotate(0deg);opacity:0;}
+10%{opacity:1;}
+100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
+}
+
+/* PANTALLAS */
 .screen{
 position:absolute;
 transition:opacity 1s ease;
@@ -65,9 +83,26 @@ opacity:0;
 pointer-events:none;
 }
 
-/* botones */
+/* CONTENEDOR BOTONES */
+#questionScreen{
+position:relative;
+width:90%;
+max-width:500px;
+height:300px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.button-container{
+position:relative;
+width:100%;
+height:140px;
+margin-top:20px;
+}
+
 button{
-margin:15px;
 padding:12px 30px;
 border:none;
 border-radius:30px;
@@ -84,14 +119,14 @@ color:white;
 .no{
 background:#444;
 color:white;
-position:relative;
+position:absolute;
 }
 
 button:hover{
 transform:scale(1.1);
 }
 
-/* explosión */
+/* EXPLOSIÓN */
 .particle{
 position:absolute;
 font-size:18px;
@@ -100,16 +135,9 @@ animation:explode 1s ease-out forwards;
 }
 
 @keyframes explode{
-from{
-transform:translate(0,0) scale(1);
-opacity:1;
+from{transform:translate(0,0) scale(1);opacity:1;}
+to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 }
-to{
-transform:translate(var(--x),var(--y)) scale(0.2);
-opacity:0;
-}
-}
-
 </style>
 </head>
 
@@ -125,8 +153,12 @@ opacity:0;
 
 <div id="questionScreen" class="screen hidden">
 <h2>¿quieres ser mi san valentín?</h2>
-<button class="si" onclick="aceptar()">sí 💖</button>
+
+<div class="button-container">
+<button class="si" id="siBtn" onclick="aceptar()">sí 💖</button>
 <button class="no" id="noBtn">no 💔</button>
+</div>
+
 </div>
 
 <div id="successScreen" class="screen hidden">
@@ -136,7 +168,7 @@ opacity:0;
 
 <script>
 
-/* estrellas */
+/* ESTRELLAS */
 for(let i=0;i<150;i++){
 let star=document.createElement("div");
 star.className="star";
@@ -146,7 +178,7 @@ star.style.animationDuration=(Math.random()*3+1)+"s";
 document.body.appendChild(star);
 }
 
-/* corazones flotando */
+/* CORAZONES FLOTANDO */
 setInterval(()=>{
 let heart=document.createElement("div");
 heart.className="floatHeart";
@@ -158,38 +190,89 @@ document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),8000);
 },500);
 
-/* iniciar */
+/* LLUVIA DE PÉTALOS */
+function lluviaPetalos(callback){
+
+for(let i=0;i<120;i++){
+let petal=document.createElement("div");
+petal.className="petal";
+petal.style.left=Math.random()*100+"vw";
+petal.style.animationDuration=(Math.random()*3+3)+"s";
+document.body.appendChild(petal);
+setTimeout(()=>petal.remove(),6000);
+}
+
+setTimeout(()=>{
+if(callback) callback();
+},1500);
+}
+
+/* INICIAR */
 document.addEventListener("click",iniciar,{once:true});
 document.addEventListener("keydown",iniciar,{once:true});
 
 function iniciar(){
+
 document.getElementById("startScreen").classList.add("hidden");
+
+lluviaPetalos(()=>{
 document.getElementById("questionScreen").classList.remove("hidden");
+});
 
 let music=document.getElementById("music");
 music.play().catch(()=>{});
 }
 
-/* botón no huye */
+/* BOTÓN NO INTELIGENTE */
 const noBtn=document.getElementById("noBtn");
+const siBtn=document.getElementById("siBtn");
+const container=document.querySelector(".button-container");
 
-noBtn.addEventListener("mouseover",()=>{
-let x=Math.random()*(window.innerWidth-100);
-let y=Math.random()*(window.innerHeight-50);
+noBtn.addEventListener("mouseenter",moverNo);
+noBtn.addEventListener("touchstart",moverNo);
 
-noBtn.style.position="absolute";
-noBtn.style.left=x+"px";
-noBtn.style.top=y+"px";
-});
+function moverNo(){
 
-/* aceptar */
+const containerRect=container.getBoundingClientRect();
+const siRect=siBtn.getBoundingClientRect();
+
+let maxX=container.clientWidth-noBtn.offsetWidth;
+let maxY=container.clientHeight-noBtn.offsetHeight;
+
+let newX,newY,overlap;
+
+do{
+newX=Math.random()*maxX;
+newY=Math.random()*maxY;
+
+let noRect={
+left:containerRect.left+newX,
+right:containerRect.left+newX+noBtn.offsetWidth,
+top:containerRect.top+newY,
+bottom:containerRect.top+newY+noBtn.offsetHeight
+};
+
+overlap=!(
+noRect.right<siRect.left||
+noRect.left>siRect.right||
+noRect.bottom<siRect.top||
+noRect.top>siRect.bottom
+);
+
+}while(overlap);
+
+noBtn.style.left=newX+"px";
+noBtn.style.top=newY+"px";
+}
+
+/* ACEPTAR */
 function aceptar(){
 document.getElementById("questionScreen").classList.add("hidden");
 document.getElementById("successScreen").classList.remove("hidden");
 explosion();
 }
 
-/* explosión romántica */
+/* EXPLOSIÓN */
 function explosion(){
 for(let i=0;i<120;i++){
 let particle=document.createElement("div");
@@ -205,7 +288,6 @@ particle.style.setProperty("--x",Math.cos(angle)*distance+"px");
 particle.style.setProperty("--y",Math.sin(angle)*distance+"px");
 
 document.body.appendChild(particle);
-
 setTimeout(()=>particle.remove(),1000);
 }
 }
