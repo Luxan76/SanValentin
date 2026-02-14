@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti ❤️</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:black;
+    color:white;
+    position:relative;
+}
+
+/* Fondo estrellas animadas */
+.stars{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:
+        radial-gradient(white 1px, transparent 1px),
+        radial-gradient(white 1px, transparent 1px);
+    background-size:50px 50px;
+    background-position:0 0, 25px 25px;
+    animation: moveStars 60s linear infinite;
+    opacity:0.4;
+    z-index:0;
+}
+
+@keyframes moveStars{
+    from{background-position:0 0, 25px 25px;}
+    to{background-position:1000px 1000px, 1025px 1025px;}
+}
+
+/* Pantalla inicial */
+#inicio{
+    text-align:center;
+    font-size:1.5rem;
+    animation: blink 1.5s infinite;
+    cursor:pointer;
+    z-index:2;
+}
+
+@keyframes blink{
+    0%,100%{opacity:1;}
+    50%{opacity:0.5;}
+}
+
+/* Carta */
+#carta{
+    display:none;
+    background:rgba(255,255,255,0.1);
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 30px pink;
+    z-index:2;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+button{
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:25px;
+    margin:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#si{
+    background:#ff4d6d;
+    color:white;
+}
+
+#no{
+    background:white;
+    color:#ff4d6d;
+    position:absolute;
+}
+
+#contador{
+    margin-top:15px;
+    font-size:16px;
+}
+
+/* Corazones */
+.corazon{
+    position:absolute;
+    font-size:20px;
+    animation: float 4s linear forwards;
+}
+
+@keyframes float{
+    0%{transform:translateY(100vh);opacity:1;}
+    100%{transform:translateY(-10vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<audio id="musica" src="musica.mp3"></audio>
+
+<div id="inicio" onclick="abrirCarta()">
+    💌 Toca la pantalla 💌
+</div>
+
+<div id="carta">
+    <h1>Ivonne 💕<br>¿Quieres ser mi San Valentín?</h1>
+    <button id="si" onclick="aceptar()">Sí 😍</button>
+    <button id="no" onmouseover="mover()">No 😅</button>
+    <div id="contador"></div>
+</div>
+
+<script>
+
+let sizeSi = 18;
+let sizeNo = 18;
+
+/* Abrir carta + música */
+function abrirCarta(){
+    document.getElementById("inicio").style.display="none";
+    document.getElementById("carta").style.display="block";
+    const musica = document.getElementById("musica");
+    musica.play().catch(()=>{});
+}
+
+/* Botón NO huye y se hace pequeño */
+function mover(){
+    const btnNo = document.getElementById("no");
+    const btnSi = document.getElementById("si");
+
+    btnNo.style.left = Math.random()*(window.innerWidth-100)+"px";
+    btnNo.style.top = Math.random()*(window.innerHeight-50)+"px";
+
+    sizeSi += 5;
+    sizeNo -= 2;
+
+    if(sizeNo < 5){ sizeNo = 5; }
+
+    btnSi.style.fontSize = sizeSi + "px";
+    btnNo.style.fontSize = sizeNo + "px";
+}
+
+/* Al aceptar */
+function aceptar(){
+    document.body.innerHTML = `
+        <div style="text-align:center;color:pink;z-index:2;">
+        <h1 style="font-size:3rem;">Sabía que dirías que sí 😍💞</h1>
+        <p style="margin-top:20px;font-size:18px;">
+        Será el mejor 14 de febrero juntos ✨💕
+        </p>
+        </div>
+    `;
+    setInterval(crearCorazon,200);
+}
+
+/* Corazones flotando */
+function crearCorazon(){
+    const c = document.createElement("div");
+    c.classList.add("corazon");
+    c.innerHTML="💖";
+    c.style.left=Math.random()*100+"vw";
+    c.style.fontSize=(Math.random()*20+15)+"px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+}
+
+/* Cuenta regresiva automática al próximo 14 de febrero */
+function actualizarContador(){
+    const ahora = new Date();
+    let año = ahora.getFullYear();
+    let fechaObjetivo = new Date(`February 14, ${año} 00:00:00`);
+
+    if(ahora > fechaObjetivo){
+        fechaObjetivo = new Date(`February 14, ${año+1} 00:00:00`);
+    }
+
+    const diferencia = fechaObjetivo - ahora;
+
+    const dias = Math.floor(diferencia/(1000*60*60*24));
+    const horas = Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
+    const minutos = Math.floor((diferencia%(1000*60*60))/(1000*60));
+    const segundos = Math.floor((diferencia%(1000*60))/1000);
+
+    document.getElementById("contador").innerHTML =
+    `Faltan 💘 ${dias}d ${horas}h ${minutos}m ${segundos}s para el 14 de febrero`;
+}
+
+setInterval(actualizarContador,1000);
+
+</script>
+
+</body>
+</html>
