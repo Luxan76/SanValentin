@@ -3,30 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Ivonne</title>
+<title>San Valentín</title>
 
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:"Georgia",cursive;
-font-style:italic;
+font-family: "Segoe Script", cursive;
+font-style: italic;
 }
 
 body{
-background:radial-gradient(circle at bottom,#000015,#000000 80%);
-color:white;
+background:black;
 overflow:hidden;
 height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-text-align:center;
+width:100vw;
+color:white;
 }
 
 /* ESTRELLAS */
+.stars{
+position:fixed;
+width:100%;
+height:100%;
+background:transparent;
+overflow:hidden;
+z-index:0;
+}
+
 .star{
 position:absolute;
 width:2px;
@@ -41,24 +46,65 @@ from{opacity:0.2;}
 to{opacity:1;}
 }
 
-/* CORAZONES FLOTANDO */
-.floatHeart{
+/* PANTALLAS */
+.screen{
 position:absolute;
-color:#ff6b9a;
-animation:floatUp linear forwards;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:2;
+text-align:center;
+padding:20px;
 }
 
-@keyframes floatUp{
-from{transform:translateY(100vh);opacity:0;}
-20%{opacity:1;}
-to{transform:translateY(-10vh);opacity:0;}
+.hidden{
+display:none;
 }
 
-/* PÉTALOS DESDE ARRIBA */
+button{
+padding:12px 30px;
+margin:15px;
+font-size:18px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+transition:0.3s;
+}
+
+#yesBtn{
+background:#ff4d6d;
+color:white;
+}
+
+#noBtn{
+background:#444;
+color:white;
+position:absolute;
+}
+
+#overlayError{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.95);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:9999;
+text-align:center;
+padding:20px;
+}
+
 .petal{
 position:absolute;
-width:18px;
-height:18px;
+width:15px;
+height:15px;
 background:radial-gradient(circle at 30% 30%, #ff8fa3, #c9184a);
 border-radius:50% 70% 60% 80%;
 opacity:0.9;
@@ -73,250 +119,185 @@ opacity:0;
 }
 10%{opacity:1;}
 100%{
-transform:translateY(110vh) rotate(720deg);
+transform:translateY(120vh) rotate(360deg);
 opacity:0;
 }
 }
 
-/* PANTALLAS */
-.screen{
+.heart{
 position:absolute;
-transition:opacity 1s ease;
-}
-
-.hidden{
-opacity:0;
+font-size:20px;
+animation:floatUp 3s linear forwards;
 pointer-events:none;
 }
 
-/* CONTENEDOR */
-#questionScreen{
-position:relative;
-width:90%;
-max-width:500px;
-height:300px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
+@keyframes floatUp{
+0%{transform:translateY(0);opacity:1;}
+100%{transform:translateY(-100vh);opacity:0;}
 }
 
-.button-container{
-position:relative;
-width:100%;
-height:200px; /* MÁS RANGO */
-margin-top:20px;
-}
-
-/* BOTONES */
-button{
-padding:12px 30px;
-border:none;
-border-radius:30px;
-font-size:18px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.si{
-background:#ff4d6d;
-color:white;
-}
-
-.no{
-background:#444;
-color:white;
+.firework{
 position:absolute;
-}
-
-button:hover{
-transform:scale(1.1);
-}
-
-/* MODAL ERROR */
-#errorModal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.9);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:99999;
-}
-
-.modal-box{
-background:#1a1a2e;
-padding:40px;
-border-radius:20px;
-box-shadow:0 0 30px #ff4d6d;
-text-align:center;
-}
-
-.modal-box button{
-margin-top:20px;
-background:#ff4d6d;
-color:white;
-}
-
-/* EXPLOSIÓN */
-.particle{
-position:absolute;
-font-size:18px;
-pointer-events:none;
-animation:explode 1s ease-out forwards;
+width:4px;
+height:4px;
+background:white;
+border-radius:50%;
+animation:explode 1s linear forwards;
 }
 
 @keyframes explode{
-from{transform:translate(0,0) scale(1);opacity:1;}
-to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
+0%{transform:scale(1);opacity:1;}
+100%{transform:scale(6);opacity:0;}
 }
-
 </style>
 </head>
 
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false">
+
+<div class="stars" id="stars"></div>
+
+<div class="screen" id="startScreen">
+<h1>Presiona cualquier tecla...</h1>
+</div>
+
+<div class="screen hidden" id="questionScreen">
+<h2>para Ivonne</h2>
+<br><br>
+<h1>¿Quieres ser mi San Valentín?</h1>
+<br>
+<button id="yesBtn">Sí</button>
+<button id="noBtn">No</button>
+</div>
+
+<div class="screen hidden" id="finalScreen">
+<h1>Cuenta regresiva para el 14 de febrero 💘</h1>
+<h2 id="countdown"></h2>
+</div>
 
 <audio id="music" loop>
-<source src="musica.mp3" type="audio/mpeg">
+<source src="music.mp3" type="audio/mpeg">
 </audio>
-
-<div id="startScreen" class="screen">
-<h1>presiona cualquier tecla para comenzar...</h1>
-</div>
-
-<div id="questionScreen" class="screen hidden">
-<h2>¿quieres ser mi san valentín?</h2>
-
-<div class="button-container">
-<button class="si" id="siBtn" onclick="aceptar()">sí 💖</button>
-<button class="no" id="noBtn">no 💔</button>
-</div>
-
-</div>
-
-<div id="successScreen" class="screen hidden">
-<h2>sabía que dirías que sí 💖</h2>
-<p>eres la mejor persona del mundo</p>
-</div>
-
-<!-- MODAL -->
-<div id="errorModal">
-<div class="modal-box">
-<h2>esa opción no está disponible 💔</h2>
-<button onclick="cerrarModal()">continuar</button>
-</div>
-</div>
 
 <script>
 
 /* ESTRELLAS */
-for(let i=0;i<150;i++){
+for(let i=0;i<120;i++){
 let star=document.createElement("div");
 star.className="star";
-star.style.top=Math.random()*100+"%";
-star.style.left=Math.random()*100+"%";
+star.style.top=Math.random()*100+"vh";
+star.style.left=Math.random()*100+"vw";
 star.style.animationDuration=(Math.random()*3+1)+"s";
-document.body.appendChild(star);
+document.getElementById("stars").appendChild(star);
 }
 
-/* CORAZONES */
-setInterval(()=>{
-let heart=document.createElement("div");
-heart.className="floatHeart";
-heart.innerHTML="❤";
-heart.style.left=Math.random()*100+"vw";
-heart.style.fontSize=(Math.random()*20+15)+"px";
-heart.style.animationDuration=(Math.random()*5+5)+"s";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),8000);
-},500);
+/* INICIAR */
+document.addEventListener("keydown", iniciar);
 
-/* LLUVIA PÉTALOS */
+function iniciar(){
+document.getElementById("startScreen").classList.add("hidden");
+lluviaPetalos(()=>{
+document.getElementById("questionScreen").classList.remove("hidden");
+});
+}
+
+/* PÉTALOS DESDE ARRIBA */
 function lluviaPetalos(callback){
-
 for(let i=0;i<150;i++){
 let petal=document.createElement("div");
 petal.className="petal";
 petal.style.left=Math.random()*100+"vw";
-petal.style.animationDuration=(Math.random()*4+4)+"s";
+petal.style.animationDuration=(Math.random()*3+4)+"s";
 document.body.appendChild(petal);
-setTimeout(()=>petal.remove(),8000);
+setTimeout(()=>petal.remove(),7000);
+}
+setTimeout(()=>{ if(callback) callback(); },1500);
 }
 
-setTimeout(()=>{
-if(callback) callback();
-},1500);
-}
-
-/* INICIAR */
-document.addEventListener("click",iniciar,{once:true});
-document.addEventListener("keydown",iniciar,{once:true});
-
-function iniciar(){
-
-document.getElementById("startScreen").classList.add("hidden");
-
-lluviaPetalos(()=>{
-document.getElementById("questionScreen").classList.remove("hidden");
-});
-
-document.getElementById("music").play().catch(()=>{});
-}
-
-/* BOTÓN NO */
-const noBtn=document.getElementById("noBtn");
-const container=document.querySelector(".button-container");
-
-noBtn.addEventListener("mouseenter",moverNo);
-noBtn.addEventListener("touchstart",moverNo);
-noBtn.addEventListener("click",mostrarError);
+/* BOTÓN NO SE MUEVE */
+let noBtn=document.getElementById("noBtn");
 
 function moverNo(){
+let rangoX = window.innerWidth - 150;
+let rangoY = window.innerHeight - 150;
 
-let maxX=container.clientWidth-noBtn.offsetWidth;
-let maxY=container.clientHeight-noBtn.offsetHeight;
+let x = Math.random()*rangoX;
+let y = Math.random()*rangoY;
 
-let newX=Math.random()*maxX;
-let newY=Math.random()*maxY;
-
-noBtn.style.left=newX+"px";
-noBtn.style.top=newY+"px";
+noBtn.style.left = x + "px";
+noBtn.style.top = y + "px";
 }
 
-/* MODAL */
+noBtn.addEventListener("mouseenter", moverNo);
+noBtn.addEventListener("click", mostrarError);
+
+/* ERROR */
 function mostrarError(){
-document.getElementById("errorModal").style.display="flex";
+let overlay=document.createElement("div");
+overlay.id="overlayError";
+overlay.innerHTML=`
+<h1>❌ Esta opción no está disponible</h1>
+<br>
+<button onclick="cerrarError()">Continuar</button>
+`;
+document.body.appendChild(overlay);
 }
 
-function cerrarModal(){
-document.getElementById("errorModal").style.display="none";
+function cerrarError(){
+document.getElementById("overlayError").remove();
 }
 
-/* ACEPTAR */
-function aceptar(){
+/* SÍ */
+document.getElementById("yesBtn").addEventListener("click", ()=>{
+explosionRomantica();
+fuegosArtificiales();
+setTimeout(()=>{
 document.getElementById("questionScreen").classList.add("hidden");
-document.getElementById("successScreen").classList.remove("hidden");
-explosion();
-}
+document.getElementById("finalScreen").classList.remove("hidden");
+iniciarCuenta();
+},1500);
+});
 
-/* EXPLOSIÓN */
-function explosion(){
+/* CORAZONES */
+function explosionRomantica(){
 for(let i=0;i<120;i++){
-let particle=document.createElement("div");
-particle.className="particle";
-particle.innerHTML="❤";
-
-let angle=Math.random()*2*Math.PI;
-let distance=Math.random()*300;
-
-particle.style.left="50%";
-particle.style.top="50%";
-particle.style.setProperty("--x",Math.cos(angle)*distance+"px");
-particle.style.setProperty("--y",Math.sin(angle)*distance+"px");
-
-document.body.appendChild(particle);
-setTimeout(()=>particle.remove(),1000);
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="❤";
+heart.style.left=Math.random()*100+"vw";
+heart.style.bottom="0";
+heart.style.fontSize=(Math.random()*20+15)+"px";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),3000);
 }
+}
+
+/* FUEGOS */
+function fuegosArtificiales(){
+for(let i=0;i<40;i++){
+let fire=document.createElement("div");
+fire.className="firework";
+fire.style.left=Math.random()*100+"vw";
+fire.style.bottom="0";
+document.body.appendChild(fire);
+setTimeout(()=>fire.remove(),1000);
+}
+}
+
+/* CUENTA REGRESIVA */
+function iniciarCuenta(){
+let target=new Date("February 14, 2026 00:00:00").getTime();
+setInterval(()=>{
+let now=new Date().getTime();
+let diff=target-now;
+
+let dias=Math.floor(diff/(1000*60*60*24));
+let horas=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+let minutos=Math.floor((diff%(1000*60*60))/(1000*60));
+let segundos=Math.floor((diff%(1000*60))/1000);
+
+document.getElementById("countdown").innerHTML=
+`${dias}d ${horas}h ${minutos}m ${segundos}s`;
+},1000);
 }
 
 </script>
