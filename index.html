@@ -151,10 +151,18 @@ button:hover{
 </div>
 
 <!-- ÁRBOL SVG -->
-<svg id="tree" viewBox="0 0 500 300" preserveAspectRatio="none">
-    <rect x="230" y="150" width="40" height="150" fill="#5a3e2b"/>
-    <g id="heartsGroup">
-    </g>
+<svg id="tree" viewBox="0 0 500 400" preserveAspectRatio="xMidYMax meet">
+
+    <!-- Tronco -->
+    <rect x="235" y="200" width="30" height="200" fill="#6b3e26"/>
+
+    <!-- Ramas -->
+    <line x1="250" y1="230" x2="200" y2="150" stroke="#6b3e26" stroke-width="6"/>
+    <line x1="250" y1="230" x2="300" y2="150" stroke="#6b3e26" stroke-width="6"/>
+    <line x1="250" y1="260" x2="170" y2="190" stroke="#6b3e26" stroke-width="6"/>
+    <line x1="250" y1="260" x2="330" y2="190" stroke="#6b3e26" stroke-width="6"/>
+
+    <g id="heartsGroup"></g>
 </svg>
 
 <div class="people">🧍‍♂️🤝🧍‍♀️</div>
@@ -182,25 +190,44 @@ for(let i=0;i<150;i++){
 
 /* GENERAR CORAZONES EN EL ÁRBOL */
 function crearCorazones(cantidad){
-    const grupo=document.getElementById("heartsGroup");
+
+    const grupo = document.getElementById("heartsGroup");
+
     for(let i=0;i<cantidad;i++){
-        let heart=document.createElementNS("http://www.w3.org/2000/svg","path");
+
+        let heart = document.createElementNS("http://www.w3.org/2000/svg","path");
+
         heart.setAttribute("d","M10 30 A20 20 0 0 1 50 30 Q50 60 10 90 Q-30 60 -30 30 A20 20 0 0 1 10 30 Z");
+
         heart.setAttribute("class","heart");
+
+        // Forma tipo copa redonda
+        let angle = Math.random() * 2 * Math.PI;
+        let radius = 100 * Math.sqrt(Math.random());
+
+        let x = 250 + radius * Math.cos(angle);
+        let y = 150 + radius * Math.sin(angle);
+
         heart.setAttribute("transform",
-            `translate(${200+Math.random()*100},${30+Math.random()*120}) scale(${Math.random()*0.3})`
+            `translate(${x},${y}) scale(${Math.random()*0.35 + 0.2})`
         );
-        heart.style.fill=`hsl(${Math.random()*50+300},70%,80%)`;
+
+        heart.style.fill = `
+            hsl(${Math.random()*20 + 340}, 
+            ${60 + Math.random()*30}%, 
+            ${65 + Math.random()*20}%)
+        `;
+
         grupo.appendChild(heart);
     }
 }
 
-crearCorazones(25);
+crearCorazones(120);
 
 /* ACEPTAR */
 function aceptar(){
     document.getElementById("pregunta").innerHTML="Sabía que dirías que sí ❤️";
-    crearCorazones(40);
+    crearCorazones(250);
 }
 
 /* ERROR */
@@ -226,3 +253,4 @@ document.onkeydown=function(e){
 
 </body>
 </html>
+
