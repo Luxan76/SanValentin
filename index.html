@@ -3,253 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nuestro Árbol 💖</title>
+<title>¿Quieres ser mi San Valentín?</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
 
 body{
     height:100vh;
-    background:#0d1020;
+    width:100vw;
     overflow:hidden;
+    background:linear-gradient(to top,#0a0a2a,#000);
+    font-family:Arial, Helvetica, sans-serif;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    color:white;
     text-align:center;
+    color:white;
+    position:relative;
 }
 
-/* Cielo estrellas */
-#stars{
-    position:absolute;
-    width:100%;
-    height:100%;
-    z-index:0;
-}
-
+/* ESTRELLAS */
 .star{
     position:absolute;
     width:2px;
     height:2px;
     background:white;
     border-radius:50%;
-    opacity:0.3;
+    animation:blink 2s infinite alternate;
 }
 
-/* Escena */
-.scene{
-    position:absolute;
-    bottom:0;
-    width:100%;
-    height:70%;
-    display:flex;
-    justify-content:center;
-    align-items:flex-end;
+@keyframes blink{
+    from{opacity:0.2;}
+    to{opacity:1;}
 }
 
-/* Tronco animado */
-#tronco{
-    transform-origin:bottom;
-    transform:scaleY(0);
-    animation: crecer 2s forwards;
+/* CONTENIDO PRINCIPAL */
+.container{
+    z-index:10;
+    padding:20px;
 }
 
-@keyframes crecer{
-    to{transform:scaleY(1);}
+h1{
+    font-size:clamp(22px,5vw,40px);
+    margin-bottom:20px;
 }
-
-/* Corazones */
-.heart{
-    animation: latido 3s infinite ease-in-out;
-}
-
-@keyframes latido{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.2);}
-    100%{transform:scale(1);}
-}
-
-/* Botones */
-#pregunta{z-index:2;margin-top:20px;}
 
 button{
     padding:12px 25px;
-    font-size:18px;
+    margin:10px;
     border:none;
     border-radius:25px;
-    margin:10px;
+    font-size:clamp(14px,2vw,18px);
     cursor:pointer;
+    transition:0.3s;
 }
 
-#si{background:#ff4d6d;color:white;}
-#no{background:white;color:#ff4d6d;}
-
-/* Modal */
-#errorModal{
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    background:rgba(0,0,0,0.7);
-    display:none;
-    justify-content:center;
-    align-items:center;
+.si{
+    background:#ff4d6d;
+    color:white;
 }
 
-#errorBox{
-    background:white;
-    color:#ff4d6d;
-    padding:30px;
-    border-radius:15px;
+.no{
+    background:#444;
+    color:white;
 }
 
-/* Corazones flotando */
-.corazon{
+button:hover{
+    transform:scale(1.1);
+}
+
+/* ÁRBOL */
+#tree{
     position:absolute;
-    font-size:20px;
-    animation: flotar 4s linear forwards;
+    bottom:0;
+    width:100%;
+    height:40vh;
 }
 
-@keyframes flotar{
-    0%{transform:translateY(100vh);opacity:1;}
-    100%{transform:translateY(-10vh);opacity:0;}
+.heart{
+    fill:pink;
+    opacity:0.8;
+    transition:0.5s;
 }
 
-#nombres{
-    margin-top:10px;
-    color:#ff9ecb;
+/* PERSONITAS */
+.people{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    text-align:center;
+    font-size:clamp(30px,5vw,50px);
+}
+
+/* MODAL ERROR */
+#errorModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.modal-content{
+  background:#1a1a2e;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 40px rgba(255,0,100,0.6);
+  animation:pop 0.4s ease;
+}
+
+.modal-content button{
+  margin-top:15px;
+  background:#ff4d6d;
+  color:white;
+}
+
+@keyframes pop{
+  from{transform:scale(0.5);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+.names{
+    position:absolute;
+    bottom:5vh;
+    width:100%;
+    font-size:clamp(16px,3vw,22px);
 }
 </style>
 </head>
 
-<body>
+<body oncontextmenu="return false">
 
-<div id="stars"></div>
-<audio id="musica" src="musica.mp3"></audio>
-
-<div id="pregunta">
-    <h1>Ivonne 💕<br>¿Quieres ser mi San Valentín?</h1>
-    <button id="si" onclick="aceptar()">Sí 😍</button>
-    <button id="no" onclick="errorNo()">No 😅</button>
-    <div id="contador"></div>
+<div class="container">
+    <h1 id="pregunta">¿Quieres ser mi San Valentín?</h1>
+    <button class="si" onclick="aceptar()">Sí 💘</button>
+    <button class="no" onclick="errorNo()">No 💔</button>
 </div>
 
-<div id="nombres">Daniel ❤️ Ivonne</div>
-
-<div class="scene">
-<svg width="400" height="400" viewBox="0 0 400 400">
-
-<!-- Tronco -->
-<rect id="tronco" x="185" y="180" width="30" height="150" fill="#4b2e2e"/>
-
-<!-- Grupo corazones -->
-<g id="corazonesBase" transform="translate(200,150)"></g>
-
-<!-- Pasto -->
-<rect x="0" y="330" width="400" height="70" fill="#102d1c"/>
-
-<!-- Persona izquierda -->
-<circle cx="170" cy="310" r="10" fill="white"/>
-<line x1="170" y1="320" x2="170" y2="350" stroke="white" stroke-width="3"/>
-
-<!-- Persona derecha -->
-<circle cx="230" cy="310" r="10" fill="white"/>
-<line x1="230" y1="320" x2="230" y2="350" stroke="white" stroke-width="3"/>
-
-<!-- Manos unidas -->
-<line x1="170" y1="335" x2="230" y2="335" stroke="#ff9ecb" stroke-width="3"/>
-
+<!-- ÁRBOL SVG -->
+<svg id="tree" viewBox="0 0 500 300" preserveAspectRatio="none">
+    <rect x="230" y="150" width="40" height="150" fill="#5a3e2b"/>
+    <g id="heartsGroup">
+    </g>
 </svg>
-</div>
 
+<div class="people">🧍‍♂️🤝🧍‍♀️</div>
+<div class="names">Daniel ❤️ Ivonne</div>
+
+<!-- MODAL -->
 <div id="errorModal">
-    <div id="errorBox">
-        ❌ Esta opción no está disponible 💕<br><br>
-        <button onclick="cerrarError()">Entendido 😅</button>
-    </div>
+  <div class="modal-content">
+    <h2>No existe esa opción 😠</h2>
+    <button onclick="cerrarError()">Entendido</button>
+  </div>
 </div>
 
 <script>
 
-const colores=["#ff4d6d","#ff8fab","#ffc2d1","#c9184a","#ffb3c6","#ffccd5"];
-
-/* Crear estrellas */
-function crearEstrellas(cantidad){
-    const cielo=document.getElementById("stars");
-    for(let i=0;i<cantidad;i++){
-        const star=document.createElement("div");
-        star.classList.add("star");
-        star.style.top=Math.random()*100+"%";
-        star.style.left=Math.random()*100+"%";
-        star.style.opacity=Math.random();
-        cielo.appendChild(star);
-    }
+/* ESTRELLAS */
+for(let i=0;i<150;i++){
+    let star=document.createElement("div");
+    star.className="star";
+    star.style.top=Math.random()*100+"vh";
+    star.style.left=Math.random()*100+"vw";
+    star.style.animationDuration=(Math.random()*3+1)+"s";
+    document.body.appendChild(star);
 }
 
-/* Corazones árbol */
+/* GENERAR CORAZONES EN EL ÁRBOL */
 function crearCorazones(cantidad){
-    const grupo=document.getElementById("corazonesBase");
+    const grupo=document.getElementById("heartsGroup");
     for(let i=0;i<cantidad;i++){
-        const x=Math.random()*200-100;
-        const y=Math.random()*120-80;
-        const color=colores[Math.floor(Math.random()*colores.length)];
-        const size=Math.random()*30+20;
-
-        const heart=document.createElementNS("http://www.w3.org/2000/svg","path");
-        heart.setAttribute("d","M0,-20 C-20,-40 -50,-10 0,30 C50,-10 20,-40 0,-20Z");
-        heart.setAttribute("fill",color);
-        heart.setAttribute("transform",`translate(${x},${y}) scale(${size/40})`);
+        let heart=document.createElementNS("http://www.w3.org/2000/svg","path");
+        heart.setAttribute("d","M10 30 A20 20 0 0 1 50 30 Q50 60 10 90 Q-30 60 -30 30 A20 20 0 0 1 10 30 Z");
         heart.setAttribute("class","heart");
+        heart.setAttribute("transform",
+            `translate(${200+Math.random()*100},${30+Math.random()*120}) scale(${Math.random()*0.3})`
+        );
+        heart.style.fill=`hsl(${Math.random()*50+300},70%,80%)`;
         grupo.appendChild(heart);
     }
 }
 
-/* Aceptar */
+crearCorazones(25);
+
+/* ACEPTAR */
 function aceptar(){
-    crearCorazones(50);
-    crearEstrellas(150);
-    setInterval(()=>{
-        const c=document.createElement("div");
-        c.classList.add("corazon");
-        c.innerHTML="💖";
-        c.style.left=Math.random()*100+"vw";
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),4000);
-    },200);
+    document.getElementById("pregunta").innerHTML="Sabía que dirías que sí ❤️";
+    crearCorazones(40);
 }
 
-/* Error */
+/* ERROR */
 function errorNo(){
     document.getElementById("errorModal").style.display="flex";
 }
+
 function cerrarError(){
     document.getElementById("errorModal").style.display="none";
 }
 
-/* Contador */
-function actualizarContador(){
-    const ahora=new Date();
-    let año=ahora.getFullYear();
-    let fecha=new Date(`February 14, ${año} 00:00:00`);
-    if(ahora>fecha){fecha=new Date(`February 14, ${año+1} 00:00:00`);}
-    const dif=fecha-ahora;
-
-    const d=Math.floor(dif/(1000*60*60*24));
-    const h=Math.floor((dif%(1000*60*60*24))/(1000*60*60));
-    const m=Math.floor((dif%(1000*60*60))/(1000*60));
-    const s=Math.floor((dif%(1000*60))/1000);
-
-    document.getElementById("contador").innerHTML=
-    `Faltan 💘 ${d}d ${h}h ${m}m ${s}s`;
-}
-
-setInterval(actualizarContador,1000);
-
-/* Inicial */
-window.onload=()=>{
-    crearEstrellas(80);
-    crearCorazones(20);
-    document.getElementById("musica").play().catch(()=>{});
+/* BLOQUEAR F12 */
+document.onkeydown=function(e){
+    if(e.keyCode==123){
+        return false;
+    }
+    if(e.ctrlKey && e.shiftKey && e.keyCode==73){
+        return false;
+    }
 };
 
 </script>
