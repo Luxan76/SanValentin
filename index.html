@@ -191,19 +191,20 @@ to{transform:translate(var(--x),var(--y)) scale(0.2);opacity:0;}
 <h2>¿quieres ser mi san valentín?</h2>
 
 <div class="button-container">
-<button class="si" onclick="aceptar()">sí 💖</button>
-<button class="no" id="noBtn">no 💔</button>
+<button class="si" onclick="aceptar()">Sí 💖</button>
+<button class="no" id="noBtn">No 💔</button>
 </div>
 </div>
 
 <div id="successScreen" class="screen hidden">
-<h2>sabía que dirías que sí 💖</h2>
-<p>eres la mejor persona del mundo</p>
+<h2>💖Owww si quieres ser mi valentín 💖</h2>
+<p>❤eres la mejor persona del mundo, te amo mucho❤</p>
 </div>
 
 <div id="errorModal">
 <div class="modal-box">
-<h2>esa opción no está disponible 💔</h2>
+<h2>Tssss no hay sistema jaja, 
+  prueba en otro momento 💔</h2>
 <button onclick="cerrarModal()">continuar</button>
 </div>
 </div>
@@ -266,7 +267,6 @@ document.getElementById("questionScreen").classList.remove("hidden");
 
 /* música inicia tras interacción */
 document.getElementById("music").play().catch(()=>{});
-function iluminarEstrellas(){
 lluviaPetalos();
 }
 
@@ -322,6 +322,7 @@ setTimeout(()=>particle.remove(),1000);
 
 </body>
 </html>
+
 
 
 
