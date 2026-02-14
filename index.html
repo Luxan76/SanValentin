@@ -3,77 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Ti ❤️</title>
+<title>Nuestro Árbol 💖</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
 
 body{
     height:100vh;
+    background:#0d1020;
     overflow:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    background:black;
     color:white;
-    position:relative;
+    text-align:center;
 }
 
-/* Fondo estrellas animadas */
-.stars{
+/* Cielo estrellas */
+#stars{
     position:absolute;
     width:100%;
     height:100%;
-    background:
-        radial-gradient(white 1px, transparent 1px),
-        radial-gradient(white 1px, transparent 1px);
-    background-size:50px 50px;
-    background-position:0 0, 25px 25px;
-    animation: moveStars 60s linear infinite;
-    opacity:0.4;
     z-index:0;
 }
 
-@keyframes moveStars{
-    from{background-position:0 0, 25px 25px;}
-    to{background-position:1000px 1000px, 1025px 1025px;}
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0.3;
 }
 
-/* Pantalla inicial */
-#inicio{
-    text-align:center;
-    font-size:1.5rem;
-    animation: blink 1.5s infinite;
-    cursor:pointer;
-    z-index:2;
+/* Escena */
+.scene{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:70%;
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
 }
 
-@keyframes blink{
-    0%,100%{opacity:1;}
-    50%{opacity:0.5;}
+/* Tronco animado */
+#tronco{
+    transform-origin:bottom;
+    transform:scaleY(0);
+    animation: crecer 2s forwards;
 }
 
-/* Carta */
-#carta{
-    display:none;
-    background:rgba(255,255,255,0.1);
-    padding:40px;
-    border-radius:20px;
-    text-align:center;
-    backdrop-filter:blur(10px);
-    box-shadow:0 0 30px pink;
-    z-index:2;
+@keyframes crecer{
+    to{transform:scaleY(1);}
 }
 
-h1{
-    margin-bottom:20px;
+/* Corazones */
+.heart{
+    animation: latido 3s infinite ease-in-out;
 }
+
+@keyframes latido{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(1);}
+}
+
+/* Botones */
+#pregunta{z-index:2;margin-top:20px;}
 
 button{
     padding:12px 25px;
@@ -82,132 +80,177 @@ button{
     border-radius:25px;
     margin:10px;
     cursor:pointer;
-    transition:0.3s;
 }
 
-#si{
-    background:#ff4d6d;
-    color:white;
+#si{background:#ff4d6d;color:white;}
+#no{background:white;color:#ff4d6d;}
+
+/* Modal */
+#errorModal{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
 }
 
-#no{
+#errorBox{
     background:white;
     color:#ff4d6d;
-    position:absolute;
+    padding:30px;
+    border-radius:15px;
 }
 
-#contador{
-    margin-top:15px;
-    font-size:16px;
-}
-
-/* Corazones */
+/* Corazones flotando */
 .corazon{
     position:absolute;
     font-size:20px;
-    animation: float 4s linear forwards;
+    animation: flotar 4s linear forwards;
 }
 
-@keyframes float{
+@keyframes flotar{
     0%{transform:translateY(100vh);opacity:1;}
     100%{transform:translateY(-10vh);opacity:0;}
+}
+
+#nombres{
+    margin-top:10px;
+    color:#ff9ecb;
 }
 </style>
 </head>
 
 <body>
 
-<div class="stars"></div>
-
+<div id="stars"></div>
 <audio id="musica" src="musica.mp3"></audio>
 
-<div id="inicio" onclick="abrirCarta()">
-    💌 Toca la pantalla 💌
-</div>
-
-<div id="carta">
+<div id="pregunta">
     <h1>Ivonne 💕<br>¿Quieres ser mi San Valentín?</h1>
     <button id="si" onclick="aceptar()">Sí 😍</button>
-    <button id="no" onmouseover="mover()">No 😅</button>
+    <button id="no" onclick="errorNo()">No 😅</button>
     <div id="contador"></div>
+</div>
+
+<div id="nombres">Daniel ❤️ Ivonne</div>
+
+<div class="scene">
+<svg width="400" height="400" viewBox="0 0 400 400">
+
+<!-- Tronco -->
+<rect id="tronco" x="185" y="180" width="30" height="150" fill="#4b2e2e"/>
+
+<!-- Grupo corazones -->
+<g id="corazonesBase" transform="translate(200,150)"></g>
+
+<!-- Pasto -->
+<rect x="0" y="330" width="400" height="70" fill="#102d1c"/>
+
+<!-- Persona izquierda -->
+<circle cx="170" cy="310" r="10" fill="white"/>
+<line x1="170" y1="320" x2="170" y2="350" stroke="white" stroke-width="3"/>
+
+<!-- Persona derecha -->
+<circle cx="230" cy="310" r="10" fill="white"/>
+<line x1="230" y1="320" x2="230" y2="350" stroke="white" stroke-width="3"/>
+
+<!-- Manos unidas -->
+<line x1="170" y1="335" x2="230" y2="335" stroke="#ff9ecb" stroke-width="3"/>
+
+</svg>
+</div>
+
+<div id="errorModal">
+    <div id="errorBox">
+        ❌ Esta opción no está disponible 💕<br><br>
+        <button onclick="cerrarError()">Entendido 😅</button>
+    </div>
 </div>
 
 <script>
 
-let sizeSi = 18;
-let sizeNo = 18;
+const colores=["#ff4d6d","#ff8fab","#ffc2d1","#c9184a","#ffb3c6","#ffccd5"];
 
-/* Abrir carta + música */
-function abrirCarta(){
-    document.getElementById("inicio").style.display="none";
-    document.getElementById("carta").style.display="block";
-    const musica = document.getElementById("musica");
-    musica.play().catch(()=>{});
-}
-
-/* Botón NO huye y se hace pequeño */
-function mover(){
-    const btnNo = document.getElementById("no");
-    const btnSi = document.getElementById("si");
-
-    btnNo.style.left = Math.random()*(window.innerWidth-100)+"px";
-    btnNo.style.top = Math.random()*(window.innerHeight-50)+"px";
-
-    sizeSi += 5;
-    sizeNo -= 2;
-
-    if(sizeNo < 5){ sizeNo = 5; }
-
-    btnSi.style.fontSize = sizeSi + "px";
-    btnNo.style.fontSize = sizeNo + "px";
-}
-
-/* Al aceptar */
-function aceptar(){
-    document.body.innerHTML = `
-        <div style="text-align:center;color:pink;z-index:2;">
-        <h1 style="font-size:3rem;">Sabía que dirías que sí 😍💞</h1>
-        <p style="margin-top:20px;font-size:18px;">
-        Será el mejor 14 de febrero juntos ✨💕
-        </p>
-        </div>
-    `;
-    setInterval(crearCorazon,200);
-}
-
-/* Corazones flotando */
-function crearCorazon(){
-    const c = document.createElement("div");
-    c.classList.add("corazon");
-    c.innerHTML="💖";
-    c.style.left=Math.random()*100+"vw";
-    c.style.fontSize=(Math.random()*20+15)+"px";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),4000);
-}
-
-/* Cuenta regresiva automática al próximo 14 de febrero */
-function actualizarContador(){
-    const ahora = new Date();
-    let año = ahora.getFullYear();
-    let fechaObjetivo = new Date(`February 14, ${año} 00:00:00`);
-
-    if(ahora > fechaObjetivo){
-        fechaObjetivo = new Date(`February 14, ${año+1} 00:00:00`);
+/* Crear estrellas */
+function crearEstrellas(cantidad){
+    const cielo=document.getElementById("stars");
+    for(let i=0;i<cantidad;i++){
+        const star=document.createElement("div");
+        star.classList.add("star");
+        star.style.top=Math.random()*100+"%";
+        star.style.left=Math.random()*100+"%";
+        star.style.opacity=Math.random();
+        cielo.appendChild(star);
     }
+}
 
-    const diferencia = fechaObjetivo - ahora;
+/* Corazones árbol */
+function crearCorazones(cantidad){
+    const grupo=document.getElementById("corazonesBase");
+    for(let i=0;i<cantidad;i++){
+        const x=Math.random()*200-100;
+        const y=Math.random()*120-80;
+        const color=colores[Math.floor(Math.random()*colores.length)];
+        const size=Math.random()*30+20;
 
-    const dias = Math.floor(diferencia/(1000*60*60*24));
-    const horas = Math.floor((diferencia%(1000*60*60*24))/(1000*60*60));
-    const minutos = Math.floor((diferencia%(1000*60*60))/(1000*60));
-    const segundos = Math.floor((diferencia%(1000*60))/1000);
+        const heart=document.createElementNS("http://www.w3.org/2000/svg","path");
+        heart.setAttribute("d","M0,-20 C-20,-40 -50,-10 0,30 C50,-10 20,-40 0,-20Z");
+        heart.setAttribute("fill",color);
+        heart.setAttribute("transform",`translate(${x},${y}) scale(${size/40})`);
+        heart.setAttribute("class","heart");
+        grupo.appendChild(heart);
+    }
+}
 
-    document.getElementById("contador").innerHTML =
-    `Faltan 💘 ${dias}d ${horas}h ${minutos}m ${segundos}s para el 14 de febrero`;
+/* Aceptar */
+function aceptar(){
+    crearCorazones(50);
+    crearEstrellas(150);
+    setInterval(()=>{
+        const c=document.createElement("div");
+        c.classList.add("corazon");
+        c.innerHTML="💖";
+        c.style.left=Math.random()*100+"vw";
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),4000);
+    },200);
+}
+
+/* Error */
+function errorNo(){
+    document.getElementById("errorModal").style.display="flex";
+}
+function cerrarError(){
+    document.getElementById("errorModal").style.display="none";
+}
+
+/* Contador */
+function actualizarContador(){
+    const ahora=new Date();
+    let año=ahora.getFullYear();
+    let fecha=new Date(`February 14, ${año} 00:00:00`);
+    if(ahora>fecha){fecha=new Date(`February 14, ${año+1} 00:00:00`);}
+    const dif=fecha-ahora;
+
+    const d=Math.floor(dif/(1000*60*60*24));
+    const h=Math.floor((dif%(1000*60*60*24))/(1000*60*60));
+    const m=Math.floor((dif%(1000*60*60))/(1000*60));
+    const s=Math.floor((dif%(1000*60))/1000);
+
+    document.getElementById("contador").innerHTML=
+    `Faltan 💘 ${d}d ${h}h ${m}m ${s}s`;
 }
 
 setInterval(actualizarContador,1000);
+
+/* Inicial */
+window.onload=()=>{
+    crearEstrellas(80);
+    crearCorazones(20);
+    document.getElementById("musica").play().catch(()=>{});
+};
 
 </script>
 
